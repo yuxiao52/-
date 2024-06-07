@@ -43,6 +43,8 @@ public class Player : Entity
 
     public PlayerAimSwordState aimSword { get; private set; }// 玩家瞄准剑
     public PlayerCatchSwordState catchSword { get; private set; }// 玩家抓取剑
+
+    public PlayerBlackholeState blackhole { get; private set; }// 黑洞状态
     #endregion
 
     // 唤醒状态
@@ -65,6 +67,8 @@ public class Player : Entity
 
         aimSword = new PlayerAimSwordState(this, stateMachine, "AimSword");
         catchSword = new PlayerCatchSwordState(this, stateMachine, "CatchSword");
+
+        blackhole = new PlayerBlackholeState(this, stateMachine, "Jump");
     }
 
     protected override void Start()
@@ -83,6 +87,11 @@ public class Player : Entity
         stateMachine.currentState.Update();
 
         CheckForDashInput();
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            skill.crystal.CanUseSkill();
+        }
     }
 
     // 分配剑
@@ -125,9 +134,5 @@ public class Player : Entity
             stateMachine.ChangeState(dashState);
         }
     }
-
-
-
-
 
 }

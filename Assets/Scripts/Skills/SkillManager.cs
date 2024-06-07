@@ -11,6 +11,8 @@ public class SkillManager : MonoBehaviour
     public Dash_Skill dash { get; private set; }// 冲刺技能
     public Clone_Skill clone { get; private set; }// 克隆技能
     public Sword_Skill sword { get; private set; }// 投掷剑技能
+    public Blackhole_Skill blackhole { get; private set; }// 黑洞技能
+    public Crystal_Skill crystal { get; private set; }// 水晶技能
 
     private void Awake()
     {
@@ -20,7 +22,6 @@ public class SkillManager : MonoBehaviour
             return;
         }
         instance = this;
-        // DontDestroyOnLoad(instance.gameObject);
     }
 
     private void Start()
@@ -28,6 +29,8 @@ public class SkillManager : MonoBehaviour
         dash = GetComponent<Dash_Skill>();
         clone = GetComponent<Clone_Skill>();
         sword = GetComponent<Sword_Skill>();
+        blackhole = GetComponent<Blackhole_Skill>();
+        crystal = GetComponent<Crystal_Skill>();
     }
 
 }

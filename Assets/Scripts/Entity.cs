@@ -11,8 +11,8 @@ public class Entity : MonoBehaviour
     public Animator anim { get; private set; }// 动画控制器
     public Rigidbody2D rb { get; private set; }// 刚体
     // public Transform tf { get; private set; }// transform
-    // public SpriteRenderer sr { get; private set; }// 精灵渲染器
     public EntityFX fx { get; private set; }// 特效组件
+    public SpriteRenderer sr { get; private set; }// 精灵渲染器
     #endregion
 
     #region Knockback 击退
@@ -47,7 +47,7 @@ public class Entity : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
         fx = GetComponentInChildren<EntityFX>();
-
+        sr = GetComponentInChildren<SpriteRenderer>();
     }
 
     protected virtual void Update()
@@ -125,6 +125,19 @@ public class Entity : MonoBehaviour
         else if (_xVelocity < 0 && facingRight)
         {
             Flip();
+        }
+    }
+
+    // 设置透明
+    public void MakeTransprent(bool _transprent)
+    {
+        if (_transprent)
+        {
+            sr.color = Color.clear;
+        }
+        else
+        {
+            sr.color = Color.white;
         }
     }
 }

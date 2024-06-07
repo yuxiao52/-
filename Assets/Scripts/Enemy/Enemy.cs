@@ -13,8 +13,8 @@ public class Enemy : Entity
     [Header("Stunned info")]
     public float stunDuration;// 眩晕持续时间
     public Vector2 stunDistance;// 眩晕距离
-    protected bool canBeStunned;// ? 是否可以被眩晕
-    [SerializeField] protected GameObject counterImage;// ? 计数器图片
+    protected bool canBeStunned;//  是否可以被眩晕
+    [SerializeField] protected GameObject counterImage;//  可反击提示
     #endregion
 
     [Header("Move info")]

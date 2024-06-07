@@ -13,6 +13,12 @@ public class Clone_Skill_Controller : MonoBehaviour
     [SerializeField] private Transform attackCheck;// 分身攻击检测点
     [SerializeField] private float attackCheckRadius = 0.8f;// 分身攻击检测半径
 
+    private Transform closestEnemy;// 最近的敌人
+
+    private bool canDuplicateClone;// 是否可以复制分身
+    private int facingDirection = 1;// 分身朝向
+    private float chanceToDuplicateClone;// 复制分身的概率
+
     private void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
@@ -33,15 +39,19 @@ public class Clone_Skill_Controller : MonoBehaviour
     }
 
     // 设置分身
-    public void SetupClone(Transform _newTransform, float _cloneDuration, bool _canAttack)
+    public void SetupClone(Transform _newTransform, float _cloneDuration, bool _canAttack, Vector3 _offset, Transform _closestEnemy, bool _canDuplicateClone, float _chanceToDuplicateClone)
     {
         if (_canAttack)
         {
             anim.SetInteger("AttackNumber", Random.Range(1, 3));
         }
-        transform.position = _newTransform.position;
+        transform.position = _newTransform.position + _offset;// 设置分身位置 _offset偏移量
         cloneTimer = _cloneDuration;
 
+        canDuplicateClone = _canDuplicateClone;
+        chanceToDuplicateClone = _chanceToDuplicateClone;
+
+        closestEnemy = _closestEnemy;
         FaceClosestTarget();// 面向最近的敌人
     }
 
@@ -55,37 +65,34 @@ public class Clone_Skill_Controller : MonoBehaviour
     private void AttackTrigger()
     {
         Collider2D[] colliders = Physics2D.OverlapCircleAll(attackCheck.position, attackCheckRadius);
-        foreach (var collider in colliders)
+
+        foreach (var hit in colliders)
         {
-            if (collider.GetComponent<Enemy>() != null)
-                collider.GetComponent<Enemy>().Damage();
+            if (hit.GetComponent<Enemy>() != null)
+            {
+                hit.GetComponent<Enemy>().Damage();
+
+                // 有概率复制分身
+                if (canDuplicateClone)
+                {
+                    if (Random.Range(0, 100) < chanceToDuplicateClone)
+                    {
+                        SkillManager.instance.clone.CreateClone(hit.transform, new Vector3(0.5f * facingDirection, 0));
+                    }
+                }
+            }
         }
     }
 
     // 面向最近的敌人
     private void FaceClosestTarget()
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 25);
-        float closestDistance = Mathf.Infinity;// 最近的距离
-        Transform closestTarget = null;// 最近的敌人
-        foreach (var collider in colliders)
+        if (closestEnemy != null)
         {
-            if (collider.GetComponent<Enemy>() != null)
+            if (transform.position.x > closestEnemy.position.x)// 面向最近的敌人
             {
-                float distance = Vector2.Distance(transform.position, collider.transform.position);
-                if (distance < closestDistance)
-                {
-                    closestDistance = distance;
-                    closestTarget = collider.transform;
-                }
-            }
-
-            if (closestTarget != null)
-            {
-                if (transform.position.x > closestTarget.position.x)// 面向最近的敌人
-                {
-                    transform.Rotate(0, 180, 0);
-                }
+                facingDirection = -1;
+                transform.Rotate(0, 180, 0);
             }
         }
     }
